@@ -1,0 +1,31 @@
+{
+    "modulesPath":[
+        "./extend/execJsScript.js"
+    ],
+    "tools":[
+        {
+            "type": "function",  
+            "function": {
+                "name": "execJsScript",  
+                "description": "执行js脚本。",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "scriptPath": {
+                            "type": "string",
+                            "description": "脚本路径" 
+                        },
+                        "args": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "命令行参数,默认为：[]" 
+                        }
+                    },
+                    "required": ["scriptPath", "args"]
+                }
+            }
+        }
+    ]
+}

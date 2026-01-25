@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aibote Agent</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div class="app-container">
+    <header class="app-header">
+      <div class="header-left-group" style="display: flex; align-items: center; gap: 16px;">
+        <div class="logo" id="userId">Aibote Agent</div>
+        
+        <div class="credit-badge" onclick="refreshCredits()" title="点击刷新积分">
+          <svg class="icon-coin" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="credit-text">剩余积分: <span id="userCredits">点击刷新</span></span>
+          <svg id="refreshIcon" class="icon-refresh" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" data-tab="config" onclick="switchTab('config')">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+          配置参数
+        </div>
+        <div class="tab" data-tab="llm" onclick="switchTab('llm')">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+          AI 对话
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div id="config" class="tab-content active">
+        <!-- <section class="config-card" style="display: none;"> -->
+          <section class="config-card"></section>
+
+          <div class="card-header">
+            <h3>大模型配置(智普AI/Kimi/豆包)</h3>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label for="apikey">API Key</label>
+              <div class="input-wrapper">
+                <input type="password" id="apikey" placeholder="[企业VIP专用通道]， 不填写则调用中转默认的微调大模型" ondblclick="showPassword('apikey')" />
+                <span class="input-hint">双击输入框显示/隐藏密码</span>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <section class="config-card">
+          <div class="card-header">
+            <h3>电脑工具模块</h3>
+            <span class="badge">Windows</span>
+          </div>
+          <div class="card-body tools-grid-layout">
+            <label class="checkbox-card">
+                <input type="checkbox" id="WinBaseTool">
+                <div class="check-content">
+                  <span class="check-title">基础模块</span>
+                  <span class="check-desc">电脑自动化必选模块。初始化电脑工具、延迟等待、获取系统ID</span>
+                </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WinWindowsTool">
+              <div class="check-content">
+                <span class="check-title">窗口模块</span>
+                <span class="check-desc">电脑核心模块。查找窗口句柄、查找桌面窗口句柄、获取窗口名称、显示/隐藏窗口、设置窗口位置 等功能</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WinMouseTool">
+              <div class="check-content">
+                <span class="check-title">鼠标模块</span>
+                <span class="check-desc">控制电脑鼠标。点击鼠标、移动鼠标 等功能</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WinKeyboardTool">
+              <div class="check-content">
+                <span class="check-title">键盘模块</span>
+                <span class="check-desc">控制电脑键盘。输入文本、输入虚拟键值 等功能</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WinImageColorTool">
+              <div class="check-content">
+                <span class="check-title">图色模块</span>
+                <span class="check-desc">截图找图找色。截图、找图、找色、比色、裁剪图片、导出视频图片 等图色相关功能</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WinAiTool">
+              <div class="check-content">
+                <span class="check-title">AI 模块</span>
+                <span class="check-desc">ocr和yolo。获取窗口/图片上的文字、查找文字坐标、目标检测</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WinElementTool">
+              <div class="check-content">
+                <span class="check-title">UI 元素</span>
+                <span class="check-desc">核心功能。获取元素名称、获取元素文本、获取元素矩形区域、点击元素、关闭元素窗口等相关功能</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WinClipboardTool">
+              <div class="check-content">
+                <span class="check-title">剪切板</span>
+                <span class="check-desc">复制、粘贴操作</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WinProcessTool">
+              <div class="check-content">
+                <span class="check-title">进程控制</span>
+                <span class="check-desc">启动 EXE、CMD 命令</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WinDownLoadTool">
+              <div class="check-content">
+                <span class="check-title">下载工具</span>
+                <span class="check-desc">URL 文件下载</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WinExcelTool">
+              <div class="check-content">
+                <span class="check-title">Excel</span>
+                <span class="check-desc">读写表格、创建删除</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WinOtherTool">
+              <div class="check-content">
+                <span class="check-title">其他</span>
+                <span class="check-desc">导出视频中的音频、关闭电脑自动化模块</span>
+              </div>
+            </label>
+          </div>
+        </section>
+
+        <section class="config-card">
+          <div class="card-header">
+            <h3>网页工具模块</h3>
+            <span class="badge orange">Web</span>
+          </div>
+          <div class="card-body tools-grid-layout">
+            <label class="checkbox-card">
+                <input type="checkbox" id="WebBaseTool">
+                <div class="check-content">
+                  <span class="check-title">基础模块</span>
+                  <span class="check-desc">Web自动化必选模块。初始化网页工具、延迟等待、打开URL、获取页面信息、切换frame、关闭浏览器 等功能</span>
+                </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WebElementTool">
+              <div class="check-content">
+                <span class="check-title">Web元素</span>
+                <span class="check-desc">核心模块。点击元素、设置/获取编辑框的值、获取元素位置、清空元素、元素是否存在/可见、上传文件、输入文本 等功能</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WebMouseTool">
+              <div class="check-content">
+                <span class="check-title">Web 鼠标</span>
+                <span class="check-desc">页面内点击、移动、鼠标 等操作</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WebKeyboardTool">
+              <div class="check-content">
+                <span class="check-title">Web 键盘</span>
+                <span class="check-desc">虚拟键输入，如回车键:13, 空格键:32, 方向键:37-40, 删除键:46</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WebEmulationTool">
+              <div class="check-content">
+                <span class="check-title">移动模拟</span>
+                <span class="check-desc">模拟手机触屏/UA、触屏/滑动</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WebDownLoadTool">
+              <div class="check-content">
+                <span class="check-title">Web 下载</span>
+                <span class="check-desc">设置浏览器下载目录</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WebCookieTool">
+              <div class="check-content">
+                <span class="check-title">Cookie</span>
+                <span class="check-desc">获取、设置、删除</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WebWindowsTool">
+              <div class="check-content">
+                <span class="check-title">Web 窗口</span>
+                <span class="check-desc">获取/设置浏览器窗口位置</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WebScreenshotTool">
+              <div class="check-content">
+                <span class="check-title">网页截图</span>
+                <span class="check-desc">全屏或区域截图</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WebAlertTool">
+              <div class="check-content">
+                <span class="check-title">弹窗处理</span>
+                <span class="check-desc">点击弹框、获取弹框文本内容</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WebNavigateTool">
+              <div class="check-content">
+                <span class="check-title">导航控制</span>
+                <span class="check-desc">前进、后退、刷新</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="WebOtherTool">
+              <div class="check-content">
+                <span class="check-title">其他 Web</span>
+                <span class="check-desc">保留功能</span>
+              </div>
+            </label>
+          </div>
+        </section>
+
+        <section class="config-card">
+          <div class="card-header">
+            <h3>安卓工具模块</h3>
+            <span class="badge green">Android</span>
+          </div>
+          <div class="card-body tools-grid-layout">
+            <label class="checkbox-card">
+                <input type="checkbox" id="AndroidBaseTool">
+                <div class="check-content">
+                  <span class="check-title">基础模块</span>
+                  <span class="check-desc">安卓自动化必选模块。初始化安卓工具、延迟等待、启动APP、获取安卓ID 等功能</span>
+                </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="AndroidElementTool">
+              <div class="check-content">
+                <span class="check-title">元素模块</span>
+                <span class="check-desc">安卓核心模块。点击元素、获取元素名称、设置元素值、获取元素区域等元素相关操作</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="AndroidImageColorTool">
+              <div class="check-content">
+                <span class="check-title">安卓图色</span>
+                <span class="check-desc">截图、找图、找色、比色、等图色相关功能</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="AndroidTouchTool">
+              <div class="check-content">
+                <span class="check-title">触屏操作</span>
+                <span class="check-desc">按下、弹起、长按、滑动、手势等操作功能</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="AndroidKeyboardTool">
+              <div class="check-content">
+                <span class="check-title">安卓键盘</span>
+                <span class="check-desc">输入文本、键值</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="AndroidNavigateTool">
+              <div class="check-content">
+                <span class="check-title">系统导航</span>
+                <span class="check-desc">Home、Back、任务、打开关机界面</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="AndroidAITool">
+              <div class="check-content">
+                <span class="check-title">安卓 AI</span>
+                <span class="check-desc">ocr和yolo。获取屏幕上的文字、查找文字坐标、目标检测</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="AndroidFileTool">
+              <div class="check-content">
+                <span class="check-title">文件管理</span>
+                <span class="check-desc">电脑手机文件拉去和推送、读取文件、写入文件、删除文件、创建目录等文件操作</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="AndroidDownloadTool">
+              <div class="check-content">
+                <span class="check-title">网络请求</span>
+                <span class="check-desc">HTTP GET/POST</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="AndroidClipboardTool">
+              <div class="check-content">
+                <span class="check-title">剪切板</span>
+                <span class="check-desc">复制、粘贴</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="AndroidToastTool">
+              <div class="check-content">
+                <span class="check-title">Toast</span>
+                <span class="check-desc">显示提示消息</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="AndroidHidTool">
+              <div class="check-content">
+                <span class="check-title">HID 模式</span>
+                <span class="check-desc">硬件级输入模拟，按住、释放、单击、双击、滑动、手势、返回、HOME 等操作功能</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="AndroidActivityTool">
+              <div class="check-content">
+                <span class="check-title">Activity</span>
+                <span class="check-desc">打电话、发短信、启动指定Activity、获取当前活动窗口的Activity</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="AndroidPackageTool">
+              <div class="check-content">
+                <span class="check-title">包管理</span>
+                <span class="check-desc">获取当前活动包名、获取已安装APP所有包名(不包括系统APP)</span>
+              </div>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="AndroidOtherTool">
+              <div class="check-content">
+                <span class="check-title">其他</span>
+                <span class="check-desc">判断指定APP是否运行、获取设备屏幕大小、获取设备旋转角度</span>
+              </div>
+            </label>
+          </div>
+        </section>
+
+        <section class="config-card">
+          <div class="card-header">
+            <h3>人工智能模块</h3>
+            <span class="badge purple">AI Avatar</span>
+          </div>
+          <div class="card-body tools-grid-layout">
+
+            <label class="checkbox-card">
+              <input type="checkbox" id="AiboteCoder">
+              <div class="check-content">
+                <span class="check-title">生成Aibote脚本</span>
+                <span class="check-desc">使用JavaScript/Python编写脚本</span>
+              </div>
+            </label>
+
+            <label class="checkbox-card">
+              <input type="checkbox" id="AiVision">
+              <div class="check-content">
+                <span class="check-title">AI视觉</span>
+                <span class="check-desc">理解视频/图片的内容。识别文件必须小于20M。也可以用于 GUI 任务处理, 辅助自动化操作</span>
+              </div>
+            </label>
+
+            <label class="checkbox-card">
+              <input type="checkbox" id="AiKnowledge">
+              <div class="check-content">
+                <span class="check-title">大模型知识库</span>
+                <span class="check-desc">添加知识库</span>
+              </div>
+            </label>
+            
+            <label class="checkbox-card">
+              <input type="checkbox" id="AiBaseTool">
+              <div class="check-content">
+                <span class="check-title">实时数字人</span>
+                <span class="check-desc">启动数字人、切换形象、背景管理</span>
+              </div>
+            </label>
+
+            <label class="checkbox-card">
+              <input type="checkbox" id="GenerateHumanVideoEx_Service">
+              <div class="check-content">
+                <span class="check-title">非实时数字人</span>
+                <span class="check-desc">生成 数字人唱歌、播报 视频</span>
+              </div>
+            </label>
+
+
+            <label class="checkbox-card">
+              <input type="checkbox" id="AiGenerate">
+              <div class="check-content">
+                <span class="check-title">AI生成</span>
+                <span class="check-desc">生成图片和视频、创建视频角色保持视频人物一致性</span>
+              </div>
+            </label>
+
+            <label class="checkbox-card">
+              <input type="checkbox" id="AiSystemAgent">
+              <div class="check-content">
+                <span class="check-title">系统Agent</span>
+                <span class="check-desc">操作电脑，帮助解决任意问题。超级强大，慎用！</span>
+              </div>
+            </label>
+
+            </div>
+        </section>
+
+        <section class="config-card">
+          <div class="card-header">
+            <h3>扩展模块</h3>
+            <span class="badge dark">Extensions</span>
+          </div>
+          
+          <div class="card-body tools-grid-layout" style="grid-template-columns: 1fr;">
+            
+            <label class="checkbox-card">
+              <input type="checkbox" id="ExtendTool">
+              <div class="check-content">
+                <span class="check-title">基础模块</span>
+                <span class="check-desc" id="ExtendToolDesc">勾选加载扩展模块</span>
+              </div>
+            </label>
+
+            </div>
+        </section>
+
+        <div class="action-bar-sticky">
+            <button id="startService" class="btn btn-primary btn-lg" disabled onclick="saveConfig(this)">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="margin-right:8px"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                保存配置并应用
+            </button>
+        </div>
+      </div>
+      
+      <div id="llm" class="tab-content">
+        <div class="chat-wrapper">
+            <div id="chat-container">
+                <div class="bot-message intro-message">
+                    👋 你好！我是 Aibote 智能助手。请配置好工具后开始与我对话。
+                </div>
+            </div>
+            
+            <div class="chat-controls-area">
+                <div class="toolbar">
+                    <div class="toolbar-left">
+                        <label class="voice-toggle" id="input_voic_checkbox_label">
+                            <input type="checkbox" id="input_voice">
+                            <span class="slider"></span>
+                            <span class="label-text">语音输入</span>
+                        </label>
+
+                        <label class="voice-toggle">
+                          <input type="checkbox" id="thinking">
+                          <span class="slider"></span>
+                          <span class="label-text">思考模式</span>
+                      </label>
+                      
+                    </div>
+                    <div class="toolbar-right">
+                        <button id="stop-button" class="btn btn-danger btn-sm" onclick="stopLlm()">中断</button>
+                        <button id="clear-button" class="btn btn-secondary btn-sm" onclick="clearMessage()">清空</button>
+                    </div>
+                </div>
+                
+                <div class="input-area">
+                    <textarea id="user-input" placeholder="在此输入指令... (Shift+Enter 换行)" autocomplete="off"></textarea>
+                    <button id="send-button" class="btn btn-send">
+                        <svg width="20" height="40" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" /></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="log-footer">
+        <div class="log-header">运行日志</div>
+        <textarea id="log" readonly></textarea>
+    </footer>
+
+  </div>
+
+<script src="script.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+</body>
+</html>

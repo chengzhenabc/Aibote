@@ -1,0 +1,604 @@
+/* --- Variables & Reset --- */
+:root {
+    --primary-color: #2563eb;       /* Tech Blue */
+    --primary-hover: #1d4ed8;
+    --bg-color: #f1f5f9;            /* Slate 100 */
+    --card-bg: #ffffff;
+    --text-main: #1e293b;           /* Slate 800 */
+    --text-muted: #64748b;          /* Slate 500 */
+    --border-color: #e2e8f0;        /* Slate 200 */
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: 'Inter', "Segoe UI", system-ui, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.5;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* App-like feel */
+  }
+  
+  /* --- Layout --- */
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    background: #fff;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+  }
+  
+  /* --- Header & Tabs --- */
+  .app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    height: 60px;
+    background: #fff;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+  }
+  
+  .logo {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary-color);
+    letter-spacing: -0.5px;
+  }
+  
+  .tabs {
+    display: flex;
+    gap: 10px;
+    background: #f1f5f9;
+    padding: 4px;
+    border-radius: 8px;
+  }
+  
+  .tab {
+    padding: 6px 16px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .tab:hover {
+    color: var(--text-main);
+    background: rgba(255,255,255,0.5);
+  }
+  
+  .tab.active {
+    background: #fff;
+    color: var(--primary-color);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    font-weight: 600;
+  }
+  
+  /* --- Main Content --- */
+  main {
+    flex: 1;
+    overflow-y: auto; /* Scrollable content area */
+    padding: 20px;
+    background: #f8fafc;
+    position: relative;
+  }
+  
+  .tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  
+  .tab-content.active {
+    display: block;
+  }
+
+  #llm.tab-content.active {
+    display: flex; 
+    height: 100%; /* 占据父元素 (main) 内容区的全部高度 */
+}
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* --- Configuration Cards --- */
+  .config-card {
+    background: var(--card-bg);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    margin-bottom: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .card-header {
+    padding: 12px 20px;
+    background: #fff;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .card-header h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-main);
+  }
+  
+  .badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: #eff6ff;
+    color: var(--primary-color);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .badge.orange { background: #fff7ed; color: #ea580c; }
+  .badge.green { background: #f0fdf4; color: #16a34a; }
+  .badge.purple { background: #faf5ff; color: #9333ea; }
+  .badge.dark { background: #f1f5f9; color: #475569; }
+  
+  .card-body {
+    padding: 20px;
+  }
+  
+  /* --- Form Elements --- */
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: var(--text-main);
+  }
+  
+  .input-wrapper {
+    position: relative;
+  }
+  
+  input[type="text"], 
+  input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  
+  input[type="text"]:focus, 
+  input[type="password"]:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+  
+  .input-hint {
+    display: block;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+  
+  /* --- Checkbox Grid System --- */
+  .tools-grid-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  
+  .split-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+  }
+  @media(max-width: 768px) { .split-row { grid-template-columns: 1fr; } }
+  
+  /* Custom Checkbox Card Style */
+  .checkbox-card {
+    display: flex;
+    align-items: flex-start;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #fff;
+  }
+  
+  .checkbox-card:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+  }
+  
+  .checkbox-card input[type="checkbox"] {
+    margin-top: 3px;
+    margin-right: 10px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+  }
+  
+  /* Optional: Highlight selected cards */
+  .checkbox-card:has(input:checked) {
+    /* border-color: var(--primary-color);
+    background: #eff6ff; */
+    border-color: var(--primary-hover); /* 选中时边框更深 */
+    background: #eef4ff; /* 选中时的背景颜色更亮 */
+  }
+  
+  .check-content {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .check-title {
+    /* font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main); */
+    font-size: 14px; /* 稍微增大字体 */
+    font-weight: 700; /* 显著加粗 */
+    color: var(--primary-color); /* 使用主题色，使其醒目 */
+  }
+  
+  .check-desc {
+    /* font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.2;
+    margin-top: 2px; */
+    font-size: 12px;
+    color: var(--text-muted); /* 保持灰色，但确保对比度足够 */
+    line-height: 1.4;
+    margin-top: 3px;
+  }
+  
+  /* --- Chat Interface --- */
+  .chat-wrapper {
+    display: flex;
+    flex-direction: column;
+    /* 取消硬编码的 calc(100vh - 160px); 改为 100% */
+    height: 100%; 
+    width: 100%; /* 确保宽度也是 100% */
+    background: #fff;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+  
+  #chat-container {
+    flex: 1; /* 关键：让聊天记录区域动态增长，占据所有可用高度 */
+    padding: 20px;
+    overflow-y: auto; /* 聊天记录过多时显示滚动条 */
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  /* Messages */
+  .user-message, .bot-message {
+      max-width: 80%;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+      position: relative;
+      word-wrap: break-word;
+  }
+  
+  .user-message {
+      align-self: flex-end;
+      background: #5a86e5;
+      color: white;
+      border-bottom-right-radius: 2px;
+      white-space: pre-wrap; 
+  }
+  
+  .bot-message {
+      align-self: flex-start;
+      background: white;
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      border-bottom-left-radius: 2px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+  
+  .intro-message {
+      background: #e0f2fe;
+      border-color: #bae6fd;
+      color: #0369a1;
+  }
+  
+  /* Chat Controls */
+  .chat-controls-area {
+    padding: 15px;
+    background: #fff;
+    border-top: 1px solid var(--border-color);
+    flex-shrink: 0; /* 关键：防止输入区域被压缩 */
+  }
+  
+  .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+  }
+  
+  /* Voice Toggle Switch */
+  .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* 两个开关之间的间距 */
+  }
+  .voice-toggle {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--text-main);
+      user-select: none;
+  }
+  .voice-toggle input { display: none; }
+  .voice-toggle .slider {
+      width: 32px;
+      height: 18px;
+      background-color: #cbd5e1;
+      border-radius: 20px;
+      position: relative;
+      margin-right: 8px;
+      transition: .3s;
+  }
+  .voice-toggle .slider:before {
+      content: "";
+      position: absolute;
+      height: 14px;
+      width: 14px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      border-radius: 50%;
+      transition: .3s;
+  }
+  .voice-toggle input:checked + .slider { background-color: var(--primary-color); }
+  .voice-toggle input:checked + .slider:before { transform: translateX(14px); }
+  
+  /* Input Area */
+  .input-area {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+  }
+  
+  #user-input {
+    flex: 1;
+    height: 100px;         /* 初始高度 */
+    min-height: 50px;     /* 最小高度 */
+    max-height: 300px;    /* 最大高度，防止盖住聊天记录 */
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    
+    /* 关键修改在这里 */
+    resize: vertical;     /* 允许垂直方向拖拽 (之前是 none) */
+    overflow-y: auto;     /* 内容过多时显示滚动条 */
+    
+    font-family: inherit;
+    font-size: 14px;
+    background: #f8fafc;
+  }
+  #user-input:focus {
+      background: #fff;
+      border-color: var(--primary-color);
+      outline: none;
+  }
+  
+  /* Buttons */
+  .btn {
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+  }
+  
+  .btn-primary { background: var(--primary-color); color: white; padding: 10px 20px; }
+  .btn-primary:hover { background: var(--primary-hover); }
+  .btn-primary:disabled { background: #cbd5e1; cursor: not-allowed; }
+  
+  .btn-secondary { background: #f1f5f9; color: var(--text-muted); padding: 6px 12px; border: 1px solid var(--border-color); }
+  .btn-secondary:hover { background: #e2e8f0; color: var(--text-main); }
+  
+  .btn-danger { background: #fee2e2; color: #dc2626; padding: 6px 12px; }
+  .btn-danger:hover { background: #fecaca; }
+  
+  .btn-send {
+      width: 46px;
+      height: 46px; /* Matches textarea roughly */
+      background: var(--primary-color);
+      color: white;
+      border-radius: 8px;
+  }
+  .btn-send:hover { background: var(--primary-hover); transform: translateY(-1px); }
+  
+  .btn-lg { width: 100%; font-size: 15px; padding: 12px; }
+  
+  .action-bar-sticky {
+      position: sticky;
+      bottom: -20px;
+      background: #f8fafc; /* match main bg */
+      padding-top: 20px;
+      padding-bottom: 0px;
+      z-index: 10;
+  }
+  
+  /* --- Log Footer --- */
+  .log-footer {
+      height: 150px;
+      background: #0f172a; /* Dark Terminal */
+      color: #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+  }
+  
+  .log-header {
+      padding: 5px 20px;
+      font-size: 11px;
+      text-transform: uppercase;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      color: #94a3b8;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+  }
+  
+  #log {
+      flex: 1;
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: #22c55e; /* Terminal Green */
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 12px;
+      padding: 10px 20px;
+      resize: none;
+      outline: none;
+  }
+
+  /* --- Markdown 内容样式 (添加到 styles.css 底部) --- */
+
+/* 修复 markdown 内部的段落间距 */
+.bot-message p {
+    margin-bottom: 10px;
+}
+.bot-message p:last-child {
+    margin-bottom: 0;
+}
+
+/* 代码块样式 */
+.bot-message pre {
+    background: #1e293b; /* 深色背景 */
+    color: #e2e8f0;
+    padding: 12px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 10px 0;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 13px;
+}
+
+.bot-message code {
+    font-family: 'Consolas', 'Monaco', monospace;
+    background: rgba(0,0,0,0.05);
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #d946ef; /* 行内代码颜色 */
+}
+
+/* 覆盖 pre 内部的 code 背景，避免冲突 */
+.bot-message pre code {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+}
+
+/* 列表样式 */
+.bot-message ul, .bot-message ol {
+    margin-left: 20px;
+    margin-bottom: 10px;
+}
+
+/* 表格样式 */
+.bot-message table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 10px 0;
+    font-size: 13px;
+}
+.bot-message th, .bot-message td {
+    border: 1px solid #cbd5e1;
+    padding: 6px 10px;
+    text-align: left;
+}
+.bot-message th {
+    background-color: #f1f5f9;
+    font-weight: 600;
+}
+
+/* 积分控件基础样式 */
+.credit-badge {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.05); /* 浅色背景 */
+  padding: 4px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  user-select: none;
+}
+
+.credit-badge:hover {
+  background: rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.credit-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: #4b5563;
+  margin: 0 6px;
+}
+
+.icon-coin {
+  color: #f59e0b; /* 金色 */
+}
+
+.icon-refresh {
+  color: #9ca3af;
+  transition: transform 0.5s ease;
+}
+
+/* 定义旋转动画 */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 刷新时的类 */
+.rotating {
+  /* linear 匀速, 0.6s 完成一次 */
+  animation: spin 0.6s linear; 
+}

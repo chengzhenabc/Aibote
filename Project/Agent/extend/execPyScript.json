@@ -1,0 +1,34 @@
+{
+    "modulesPath": [
+        "./extend/execPyScript.js"
+    ],
+    "tools": [
+        {
+            "type": "function",
+            "function": {
+            "name": "execPyScript",
+            "description": "执行 Python 脚本。",
+            "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "args": {
+                            "type": "array",
+                            "items": {
+                            "type": "string"
+                            },
+                            "description": "传递给 Python 脚本的命令行参数列表，默认为空数组 []。"
+                        },
+                        "scriptPath": {
+                            "type": "string",
+                            "description": "Python 脚本文件 (.py) 的绝对路径。"
+                        }
+                    },
+                    "required": [
+                        "scriptPath",
+                        "args"
+                    ]
+                }
+            }
+        }
+    ]
+}
