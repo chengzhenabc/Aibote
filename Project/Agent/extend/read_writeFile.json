@@ -1,0 +1,45 @@
+{
+    "modulesPath":[
+        "./extend/read_writeFile.js"
+    ],
+    "tools":[
+        {
+            "type": "function",  
+            "function": {
+                "name": "readFile",
+                "description": "读取文本内容",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "filePath": {
+                            "type": "string",  
+                            "description": "文件路径"
+                        }
+                    },
+                    "required": ["filePath"]
+                }  
+            }
+        },
+        {
+            "type": "function",  
+            "function": {
+                "name": "writeFile",
+                "description": "写入文本内容",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "filePath": {
+                            "type": "string",  
+                            "description": "文件路径"
+                        },
+                        "data": {
+                            "type": "string",  
+                            "description": "写入的数据"
+                        }
+                    },
+                    "required": ["filePath", "data"]
+                }  
+            }
+        }
+    ]
+}

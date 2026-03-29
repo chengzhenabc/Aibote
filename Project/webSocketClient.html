@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Aibote中控</title>
+
+<style>
+    .aiboteLog{
+        width: 480px;
+        height: 200px;
+    }
+    body{width: 500px; height: 300px;}
+</style>
+
+</head>
+<body>
+    <textarea class="aiboteLog" id="aiboteLog" placeholder="Aibote 执行日志"></textarea>
+    <br><br>
+    <input id="valUrl" placeholder="输入url">
+    <br><br>
+    <button id="btnOpen">跳转网址</button>
+</body>
+
+<script type="text/javascript">
+    let ws = new WebSocket('ws://localhost:8181');//服务端端口8181 对应WebSocketBot.build第二个参数
+    ws.onopen = function(){
+        console.log("连接服务器成功");
+    }
+
+    ws.onclose = function(e){
+        console.log("服务器关闭");
+    }
+
+    ws.onerror = function(e){
+        console.log("连接出错");
+    }
+
+    let aiboteLog = document.getElementById("aiboteLog");
+    ws.onmessage = function(msg){
+        //接收服务端的数据
+        let message = msg.data;
+        aiboteLog.value += message + "\n";
+    }
+
+    let btnOpen = document.getElementById("btnOpen");
+    btnOpen.onclick = function(){
+        let url = document.getElementById("valUrl").value;
+        //发送json数据格式
+        let jsonMsg = {
+            "command":"openUrl",
+            "data":url
+        }
+        //json格式转换成字符串
+        let strMsg = JSON.stringify(jsonMsg);
+        ws.send(strMsg);//发送数据到服务端
+    }
+</script>
+</html>

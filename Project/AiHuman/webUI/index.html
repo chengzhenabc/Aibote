@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <title>Aibote NewHuman</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="tabs">
+    <div class="tab" data-tab="config" onclick="switchTab('config')">配置参数</div>
+    <div class="tab" data-tab="deepseek" onclick="switchTab('deepseek')">大屏幕互动</div>
+    <div class="tab" data-tab="live" onclick="switchTab('live')">数字人直播</div>
+    <!-- <div class="tab" data-tab="synthesis" onclick="switchTab('synthesis')">语音合成</div> -->
+    <div class="tab" data-tab="avatar" onclick="switchTab('avatar')">数字人生成</div>
+    <div class="tab" data-tab="publish" onclick="switchTab('publish')">发布作品</div>
+    <div class="tab" data-tab="human_clone" onclick="switchTab('human_clone')">形象训练</div>
+    <div class="tab" data-tab="voice_clone" onclick="switchTab('voice_clone')">声音克隆</div>
+    <div class="tab" data-tab="train_model" onclick="switchTab('train_model')">模型训练</div>
+  </div>
+   <!-- 配置参数 -->
+   <div id="config" class="tab-content active">
+    <h2>用户ID：<span id="userId" style="color: red;"></span></h2>
+    <h2 class="hidden-no-space">阿里云通义千问配置</h2>
+    <label for="appid" class="hidden-no-space">应用ID</label>
+    <input type="password" id="llm_appid" class="hidden-no-space" placeholder="[可选]，不填写则调用中转积分系统服务" ondblclick="showPassword('llm_appid')" />
+
+    <label for="apikey" class="hidden-no-space">API Key</label>
+    <input type="password" id="apikey" class="hidden-no-space" placeholder="[可选]，不填写则调用中转积分系统服务"  ondblclick="showPassword('apikey')" />
+    <br class="hidden-no-space">
+
+    <h2 class="hidden-no-space">阿里云语音识别配置(真人语音/音频 驱动需要配置此密钥)</h2>
+    <label for="accessKeyId" class="hidden-no-space">AccessKey ID</label>
+    <input type="password" id="accessKeyId" class="hidden-no-space" placeholder="[可选]，不填写则调用中转积分系统服务" ondblclick="showPassword('accessKeyId')" />
+
+    <label for="accessKeySecret" class="hidden-no-space">accessKey Secret</label>
+    <input type="password" id="accessKeySecret" class="hidden-no-space" placeholder="[可选]，不填写则调用中转积分系统服务" ondblclick="showPassword('accessKeySecret')" />
+
+    <label for="appKey" class="hidden-no-space">Appkey</label>
+    <input type="password" id="appKey" class="hidden-no-space" placeholder="[可选]，不填写则调用中转积分系统服务" ondblclick="showPassword('appKey')" />
+
+    <br class="hidden-no-space">
+    <h2 class="hidden-no-space">火山云语音合成配置</h2>
+    <label for="appid" class="hidden-no-space">APP ID</label>
+    <input type="password" id="appid" class="hidden-no-space" placeholder="[可选]，不填写则调用中转积分系统服务" ondblclick="showPassword('appid')"/>
+
+    <label for="token" class="hidden-no-space">Access Token</label>
+    <input type="password" id="token" class="hidden-no-space" placeholder="[可选]，不填写则调用中转积分系统服务" ondblclick="showPassword('token')" />
+
+    <h2>语音合成配置</h2>
+    <label for="cluster">Cluster ID</label>
+    <select id="cluster" onchange="updateVoiceSelect()">
+      <option value="volcano_tts" selected>volcano_tts（语音合成）</option>
+      <option value="volcano_icl">volcano_icl（声音复刻）</option>
+    </select>
+
+    <label for="voiceWrapper">声音 ID</label>
+    <div id="voiceWrapper"></div>
+
+    <label for="speed_ratio">语速 (speed_ratio)</label>
+    <input type="number" id="speed_ratio" value="1" step="0.1" />
+
+    <br>
+    <h2>数字人配置</h2>
+
+    <label for="modelFolder">模型文件夹</label>
+    <input type="text" id="modelFolder" placeholder="如：C:/models/avatar1" />
+    
+    <label for="scale">缩放比例</label>
+    <input type="number" id="scale" value="0.5" step="0.1" min="0.1" max="2" />
+    
+    <label for="figureVideoPath">人物视频路径</label>
+    <input type="text" id="figureVideoPath" placeholder="如：C:/videos/person.mp4   设置：0 则驱动本地摄像头" />
+
+    <label for="bgPath">[可选]背景 视频/图片 路径</label>
+    <input type="text" id="bgPath" placeholder="如：C:/videos/bg.png" />
+
+    <label for="pushStream">[可选]推流地址</label>
+    <input type="text" id="pushStream" placeholder="如：rtmp://your_server_ip/live/stream" />
+
+    <label class="checkbox-label voice-control">
+      <input type="checkbox" id="paly_media_audio">
+      <span>是否播放原素材声音</span>
+    </label>
+
+    <label class="checkbox-label voice-control">
+      <input type="checkbox" id="is_blur_mouth">
+      <span>优化口型细节(降低清晰度)</span>
+    </label>
+
+    <br>
+    <br>
+    <button id="startService" disabled onclick="saveConfig(this)">启动服务</button>
+  </div>
+
+  <!-- DeepSeek -->
+  <div id="deepseek" class="tab-content">
+    <div id="chat-container"></div>
+    
+    <input type="text" id="user-input" placeholder="输入你的问题..." autocomplete="off">
+
+    <div class="send-controls">
+      <button id="send-button">发送</button>
+
+      <button id="stop-button" onclick="stopSpeak()">打断</button>
+      <!-- <button class="input-voice-btn" id="input_mode">按住录制</button> -->
+
+      <label class="checkbox-label">
+        <input type="checkbox" id="input_mode">
+        <span>语音输入</span>
+      </label>
+
+
+      <label class="checkbox-label">
+        <input type="checkbox" id="human_mode">
+        <span>阿凡达</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- 直播系统 -->
+  <div id="live" class="tab-content">
+    <div class="form-row">
+      <label for="llmPrompt">大模型提示词：</label>
+      <input type="text" id="llmPrompt" value = "你是一名主播，正在与观众互动，请简要回答观众的问题" placeholder="你是一名主播，正在与观众互动，请简要回答观众的问题"/>
+    </div>
+    <br>
+
+    <div class="form-row">
+      <label for="barrageUrl">弹幕抓取链接：</label>
+      <input type="text" id="barrageUrl" placeholder="如：https://v.douyin.com/axexG1IzRAp/"/>
+      <button class="barrage-btn" onclick="initBarrageService(this)">开始抓取</button>
+    </div>
+    <br>
+
+    <div class="form-row">
+      <label for="waresUrl">商品弹窗链接：</label>
+      <input type="text" id="waresUrl" placeholder="如：https://buyin.jinritemai.com/dashboard/live/control"/>
+      <button class="wares-btn" onclick="initPopupWaresService()">启动弹窗</button>
+    </div>
+    <br>
+
+    <!-- 固定话术编辑区 -->
+    <div id="fixed-script-tabs-container">
+      <div class="tab-header">
+        <!-- 标签按钮会动态插入 -->
+        <button id="add-fixed-tab" onclick="addFixedTab()">+ 添加话术</button>
+      </div>
+      <div class="tab-content-wrapper">
+        <!-- 对应的编辑区动态插入 -->
+      </div>
+    </div>
+  
+    <br>
+
+    <!-- 关键词+回复 管理 -->
+    <div class="container" id="table-container">
+      <div class="table-scroll-container">
+        <table id="keywordTable">
+          <thead>
+            <tr>
+              <th>关键词</th>
+              <th>回复</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td contenteditable="true">你好</td>
+              <td contenteditable="true">你好！很高兴为你服务。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  
+      <div class="btn-column">
+        <button class="table-btn" onclick="addTableRow('keywordTable')">添加</button>
+        <button class="table-btn" onclick="delTableRow('keywordTable')">删除</button>
+        <button class="table-btn"  onclick="toggleTable('keywordTable', this)">🔽折叠</button>
+      </div>
+    </div>
+
+    <br>
+      
+    <div class="container">
+      <div class="table-scroll-container">
+      <!-- 欢迎新进来的人 -->
+      <table id="welcomeTable">
+        <thead>
+          <tr>
+            <th>播报欢迎新人</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td contenteditable="true">欢迎{name}进入直播间</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+      <div class="btn-column">
+        <button class="table-btn" onclick="addTableRow('welcomeTable')">添加</button>
+        <button  class="table-btn" onclick="delTableRow('welcomeTable')">删除</button>
+        <button  class="table-btn" onclick="toggleTable('welcomeTable', this)">🔽折叠</button>
+      </div>
+
+      <div class="table-scroll-container">
+      <!-- 互动播报观众名称-->
+      <table id="interactionTable">
+        <thead>
+          <tr>
+            <th>弹幕互动播报观众名称</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td contenteditable="true">回答{name}的问题</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+      <div class="btn-column">
+        <button  class="table-btn" onclick="addTableRow('interactionTable')">添加</button>
+        <button  class="table-btn"  onclick="delTableRow('interactionTable')">删除</button>
+        <button  class="table-btn" onclick="toggleTable('interactionTable', this)">🔽折叠</button>
+      </div>
+    </div>
+
+    <br>
+    <br>
+    <div class="form-row">
+      <label for="insertScript">插入应急话术：</label>
+      <input type="text" id="insertScript" placeholder="输入播报的话术"/>
+      <button class="insert-script-btn" id="insertScriptButton" onclick="insertScript()">插入话术</button>
+
+      <!-- <button  class="input-voice-btn" id="live_input_mode">按住录制</button> -->
+      <label class="checkbox-label">
+        <input type="checkbox" id="live_input_mode">
+        <span>语音输入</span>
+      </label>
+    </div>
+
+    <br>
+    <br>
+    <!-- 启动/停止 按钮 -->
+    <div class="control-group buttons">
+      <button id="start-live-btn" onclick="startLive(this, 'stop-live-btn')">开始直播</button>
+      <button id="stop-live-btn" onclick="stopLive(this, 'start-live-btn')" disabled>停止直播</button>
+
+      <label class="checkbox-label voice-control">
+        <input type="checkbox" id="random_param">
+        <span>实时去重</span>
+      </label>
+
+    </div>
+  </div>
+
+  <!-- 语音合成 -->
+  <div id="synthesis" class="tab-content">
+    <label for="text">合成文本</label>
+    <textarea id="text" rows="4" placeholder="请输入要合成的文本"></textarea>
+
+    <label for="saveAudioPath">保存音频路径</label>
+    <input type="text" id="saveAudioPath" placeholder="如：C:/output/audio.wav" />
+
+    <button id="synthesis_btn" onclick="submitSynthesis()">提交合成</button>
+  </div>
+
+  <!-- 数字人生成 -->
+  <div id="avatar" class="tab-content">
+    <label for="serverIp" class="hidden-no-space">服务端 IP</label>
+    <input type="text" class="hidden-no-space" placeholder="[可选]，不填写则调用中转积分系统服务" id="serverIp" />
+
+    <label for="callApiKey" class="hidden-no-space">调用密钥</label>
+    <input type="text" class="hidden-no-space" placeholder="[可选]，不填写则调用中转积分系统服务" id="callApiKey" />
+
+    <label for="audioPath">音频路径/播报文本</label>
+    <input type="text" id="audioPath" placeholder="如：C:/input/audio.wav 或者： 输入你要口播的文本内容" />
+
+    <label for="videoPath">原视频路径</label>
+    <input type="text" id="videoPath" placeholder="如：C:/input/video.mp4" />
+
+    <label for="saveVideoPath">保存视频路径</label>
+    <input type="text" id="saveVideoPath" placeholder="如：C:/output/result.mp4" />
+
+    <!-- <button id="avatar_btn" onclick="submitAvatar()">提交生成</button> -->
+
+
+    <div class="send-controls">
+      <button id="avatar_btn" onclick="submitAvatar()">提交生成</button>
+
+      <label class="checkbox-label">
+        <input type="checkbox" id="is_music">
+        <span>合成唱歌视频</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- 发布作品 -->
+  <div id="publish" class="tab-content">
+    <label for="title">标题</label>
+    <input type="text" id="title" placeholder="请输入标题" />
+
+    <label for="description">简介</label>
+    <textarea id="description" rows="4" placeholder="请输入作品简介"></textarea>
+
+    <label for="topics">话题</label>
+    <input type="text" id="topics" placeholder="如：科技、情感、文学..." />
+
+    <label for="publishPath">视频路径</label>
+    <input type="text" id="publishPath" placeholder="如：C:/input/video.mp4" />
+
+    <button id="publish_btn" onclick="submitPublish()">发布作品</button>
+  </div>
+
+  <!-- 数字人克隆 -->
+  <div id="human_clone" class="tab-content">
+    <label for="human_clone_serverIp" class="hidden-no-space">服务端 IP</label>
+    <input type="text" class="hidden-no-space" placeholder="[可选]，不填写则调用中转积分系统服务" id="human_clone_serverIp" />
+
+    <label for="human_clone_callApiKey" class="hidden-no-space">调用密钥</label>
+    <input type="text" class="hidden-no-space" placeholder="[可选]，不填写则调用中转积分系统服务" id="human_clone_callApiKey" />
+
+    <label for="human_clone_videoPath">克隆人物的视频路径</label>
+    <input type="text" id="human_clone_videoPath" placeholder="如：C:/input/video.mp4" />
+
+    <button id="human_clone_btn" onclick="submitHumanClone()">开始训练</button>
+  </div>
+
+  <!-- 声音克隆 -->
+  <div id="voice_clone" class="tab-content">
+    <label for="voice_clone_appid" class="hidden-no-space">APP ID</label>
+    <input type="text" class="hidden-no-space" placeholder="[可选]，不填写则调用中转积分系统服务" id="voice_clone_appid" />
+
+    <label for="voice_clone_token" class="hidden-no-space">Access Token</label>
+    <input type="text" class="hidden-no-space" placeholder="[可选]，不填写则调用中转积分系统服务" id="voice_clone_token" />
+
+    <label for="voice_clone_spkId" class="hidden-no-space">声音 ID</label>
+    <input type="text" class="hidden-no-space" placeholder="[可选]，不填写则调用中转积分系统服务" id="voice_clone_spkId" />
+
+    <label for="refer_audio_path">参考音频</label>
+    <input type="text" id="refer_audio_path" placeholder="如：C:/input/audio.wav" />
+
+    <button id="voice_clone_btn" onclick="submitVoiceClone()">开始克隆</button>
+  </div>
+
+  <!-- 训练模型 -->
+  <div id="train_model" class="tab-content">
+    <label for="train_model_serverIp" class="hidden-no-space">服务端 IP</label>
+    <input type="text" class="hidden-no-space" placeholder="[可选]，不填写则调用中转积分系统服务" id="train_model_serverIp" />
+
+    <label for="train_model_callApiKey" class="hidden-no-space">调用密钥</label>
+    <input type="text" class="hidden-no-space" placeholder="[可选]，不填写则调用中转积分系统服务" id="train_model_callApiKey" />
+
+    <label for="train_data_path">训练素材路径（视频/图片）</label>
+    <input type="text" id="train_data_path" placeholder="如：C:/input/video.mp4 或者：C:/input/image.png" />
+
+    <label for="train_save_folder">模型保存的目录</label>
+    <input type="text" id="train_save_folder" placeholder="如：C:/output"/>
+
+    <button id="train_model_btn" onclick="submitTrainModel()">开始训练</button>
+  </div>
+
+  <textarea id="log" rows="8" readonly style="width:100%; background:#f0f0f0; padding:10px; font-family:monospace;"></textarea>
+
+<script src="script.js"></script>
+</body>
+</html>

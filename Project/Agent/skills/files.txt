@@ -1,0 +1,3 @@
+aiboteCoder\skill.md|2552
+installExtend\skill.md|1224
+installMcp\skill.md|3137

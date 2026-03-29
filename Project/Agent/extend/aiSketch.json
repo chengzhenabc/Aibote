@@ -1,0 +1,26 @@
+{
+    "modulesPath": [
+        "./extend/aiSketch.js"
+    ],
+    "tools": [
+        {
+            "type": "function",
+            "function": {
+            "name": "aiSketch",
+            "description": "模拟手工绘制",
+            "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "imagePath": {
+                            "type": "string",
+                            "description": "参照图片路径，未指定则默认设置为：'script\\defaultImage.png'"
+                        }
+                    },
+                    "required": [
+                        "imagePath"
+                    ]
+                }
+            }
+        }
+    ]
+}

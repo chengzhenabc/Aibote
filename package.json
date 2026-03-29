@@ -1,0 +1,22 @@
+{
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.20.1",
+    "axios": "^1.13.4",
+    "crypto": "^1.0.1",
+    "formidable": "^3.5.4",
+    "gray-matter": "^4.0.3",
+    "node-cron": "^4.2.1",
+    "restler": "^3.4.0",
+    "unzipper": "^0.12.3",
+    "ws": "^8.18.3"
+  },
+  "pkg": {
+    "assets": [
+      "node_modules/@modelcontextprotocol/sdk/**/*"
+    ],
+    "scripts": [
+      "node_modules/@modelcontextprotocol/sdk/**/*.js"
+    ],
+    "outputPath": "."
+  }
+}
